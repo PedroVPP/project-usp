@@ -1,7 +1,7 @@
 package br.usp.project_usp.diagram;
 
 import java.io.File;
-import org.w3c.dom.Document;
+import org.dom4j.Document;
 /**
  *
  * @author pedro
@@ -18,8 +18,8 @@ public class Diagram {
         this.document = document;
         this.type = type;
         
-        this.id = document.getElementsByTagName("UML:Model").item(0).getAttributes().getNamedItem("xmi.id").getNodeValue();
-        this.name = document.getElementsByTagName("UML:Model").item(0).getAttributes().getNamedItem("name").getNodeValue();
+        this.id = document.selectSingleNode("/XMI/descendant::UML:Model/@xmi.id").getText();
+        this.name = document.selectSingleNode("/XMI/descendant::UML:Model/@name").getText();
     }
     
     

@@ -12,6 +12,7 @@ public class Association {
     private String id;
     private String name;
     private UmlClass[] pasticipants = new UmlClass[2];
+    //association ends?
 
     /**
      * @return the id
@@ -62,5 +63,23 @@ public class Association {
     
     public UmlClass getSecondParticipant() {
         return this.pasticipants[1];
+    }
+    
+    public void addParticipant(UmlClass pasticipant) throws Exception {
+        if(this.pasticipants[0] == null) {
+            this.pasticipants[0] = pasticipant;
+        } else if(this.pasticipants[1] == null) {
+            this.pasticipants[1] = pasticipant;
+        } else {
+            throw new Exception("Array of participants is already full");
+        }   
+    }
+    
+    @Override
+    public String toString() {
+        return "Id = " + this.id + "\n" +
+               "Name = " + this.name + "\n" +
+               "Participant1" + this.pasticipants[0] + "\n" +
+               "Participant2" + this.pasticipants[1];
     }
 }

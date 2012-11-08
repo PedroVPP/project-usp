@@ -4,7 +4,6 @@
  */
 package br.usp.project_usp.diagram.state_diagram;
 
-import br.usp.project_usp.diagram.class_diagram.ClassDiagram;
 import br.usp.project_usp.parser.Parser;
 import java.io.File;
 import java.util.List;
@@ -14,7 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.w3c.dom.Document;
+import org.dom4j.Document;
 
 /**
  *
@@ -42,17 +41,37 @@ public class StateDiagramTest {
     }
     
     @Test
+    public void testCorrectStateTypeName() {
+        assertEquals("UML:CompositeState", StateType.UML_CompositeState.toString());
+        assertEquals("UML:FinalState", StateType.UML_FinalState.toString());
+        assertEquals("UML:Pseudostate", StateType.UML_Pseudostate.toString());
+        assertEquals("UML:SimpleState", StateType.UML_SimpleState.toString());
+    }
+    
+    @Test
     public void testNumberOfTransitions() {
         Parser parser = new Parser();
         File xmiFile = new File("/home/pedro/Dropbox/Documentos/workspace-eclipse-netbeans/argouml_protocolstatemachine_test.xmi");
         Document document = parser.parse(xmiFile);
-        
         StateDiagram stateDiagram = new StateDiagram(xmiFile, document);
-        
         for (int i = 0; i < stateDiagram.getTransitions().size(); i++) {
-            System.out.println("Transition = " + stateDiagram.getTransitions().get(i).toString());
+            System.out.println("Transition = " + stateDiagram.getTransitions().get(i).toString() + "\n");
         }
         
         assertEquals(14,stateDiagram.getTransitions().size());
+    }
+    
+    @Test
+    public void testNumberOfStates() {
+        Parser parser = new Parser();
+        File xmiFile = new File("/home/pedro/Dropbox/Documentos/workspace-eclipse-netbeans/argouml_protocolstatemachine_test.xmi");
+        Document document = parser.parse(xmiFile);
+        StateDiagram stateDiagram = new StateDiagram(xmiFile, document);
+        
+        for (int i = 0; i < stateDiagram.getStates().size(); i++) {
+            System.out.println("State = " + stateDiagram.getStates().get(i).toString());
+        }
+        
+        assertEquals(17,stateDiagram.getStates().size());
     }
 }
