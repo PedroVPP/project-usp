@@ -49,5 +49,9 @@ public class Guard {
         this.name = name;
     }
     
-    
+    @Override
+    public String toString() {
+        return "Id = " + this.id + "\n" +
+               "Name = " + this.name;
+    }
 }

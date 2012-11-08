@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.w3c.dom.Document;
+import org.dom4j.Document;
 
 /**
  *
@@ -41,7 +41,7 @@ public class ClassDiagramTest {
     }
 
     @Test
-    public void testClassDiagramIdAndName() {
+    public void testClassDiagramIdAndName() throws Exception {
         Parser parser = new Parser();
         File xmiFile = new File("/home/pedro/Dropbox/Documentos/workspace-eclipse-netbeans/argouml_classdiagram_test.xmi");
         Document document = parser.parse(xmiFile);
@@ -53,13 +53,12 @@ public class ClassDiagramTest {
     }
     
     @Test
-    public void testNumberOfClasses() {
+    public void testNumberOfClasses() throws Exception {
         Parser parser = new Parser();
         File xmiFile = new File("/home/pedro/Dropbox/Documentos/workspace-eclipse-netbeans/argouml_classdiagram_test.xmi");
         Document document = parser.parse(xmiFile);
         
         ClassDiagram classDiagram = new ClassDiagram(xmiFile, document);
-        
         
         for (int i = 0; i < classDiagram.getClasses().size(); i++) {
             System.out.println("Classe = " + classDiagram.getClasses().get(i).getName());
@@ -69,7 +68,7 @@ public class ClassDiagramTest {
     }
     
     @Test
-    public void testClassesAttributes() {
+    public void testClassesAttributes() throws Exception {
         Parser parser = new Parser();
         File xmiFile = new File("/home/pedro/Dropbox/Documentos/workspace-eclipse-netbeans/argouml_classdiagram_test.xmi");
         Document document = parser.parse(xmiFile);
@@ -78,7 +77,6 @@ public class ClassDiagramTest {
         for (int i = 0; i < classDiagram.getClasses().size(); i++) {
             System.out.println("Classe = " + classDiagram.getClasses().get(i).getName());
             if(!(classDiagram.getClasses().get(i).getAttributes().isEmpty())) {
-                System.out.println("\n");
                 System.out.println("Atributos: ");
                 for (int j = 0; j < classDiagram.getClasses().get(i).getAttributes().size(); j++) {
                     System.out.println(classDiagram.getClasses().get(i).getAttributes().get(j).getName() + " "); 
@@ -86,25 +84,23 @@ public class ClassDiagramTest {
             } else {
                 System.out.println("\n Não possui atributos");
             }
-            
-            
         }
         
     }
     
     @Test
-    public void testNumberOfAssociations() {
+    public void testNumberOfAssociations() throws Exception {
         Parser parser = new Parser();
         File xmiFile = new File("/home/pedro/Dropbox/Documentos/workspace-eclipse-netbeans/argouml_classdiagram_test.xmi");
         Document document = parser.parse(xmiFile);
         
         ClassDiagram classDiagram = new ClassDiagram(xmiFile, document);
+                
+        assertEquals(7,classDiagram.getAssociations().size());
         
         for (int i = 0; i < classDiagram.getAssociations().size(); i++) {
             System.out.println("Association "+ i +":" + "Primeiro participante: " + classDiagram.getAssociations().get(i).getFirstParticipant().getName() 
                                                       + "\n Segundo participante: " + classDiagram.getAssociations().get(i).getSecondParticipant().getName());
         }
-        
-        assertEquals(7,classDiagram.getAssociations().size());
     }
 }

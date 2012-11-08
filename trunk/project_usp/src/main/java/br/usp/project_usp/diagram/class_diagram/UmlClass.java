@@ -16,6 +16,7 @@ public class UmlClass {
     private String id;
     private String name;
     private List<Attribute> attributes;
+    private String stereotype;
 
     public UmlClass() {
         attributes = new ArrayList<Attribute>();
@@ -81,5 +82,11 @@ public class UmlClass {
         }
         
         return result;
+    }
+    
+    @Override
+    public String toString() {
+        return "Id = " + this.id + "\n" +
+               "Name = " + this.name;
     }
 }

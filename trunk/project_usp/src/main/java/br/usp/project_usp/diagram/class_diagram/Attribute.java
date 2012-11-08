@@ -66,4 +66,9 @@ public class Attribute {
         this.type = type;
     }
     
+    @Override
+    public String toString() {
+        return "Id = " + this.id + "\n" +
+               "Name = " + this.name;
+    }
 }

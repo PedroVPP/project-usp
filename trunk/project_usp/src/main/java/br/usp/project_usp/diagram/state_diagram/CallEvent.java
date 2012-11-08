@@ -71,4 +71,11 @@ public class CallEvent {
     public void addParameter(Parameter parameter) {
         this.parameters.add(parameter);
     }
+    
+    @Override
+    public String toString() {
+        return "Id = " + this.id + "\n" +
+               "Name = " + this.name + "\n" + 
+               "Parameters = " + Parameter.displayParameters(this.parameters);        
+    }
 }

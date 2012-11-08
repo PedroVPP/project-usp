@@ -4,6 +4,9 @@
  */
 package br.usp.project_usp.diagram.state_diagram;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  *
  * @author pedro
@@ -47,5 +50,20 @@ public class Parameter {
      */
     public void setName(String name) {
         this.name = name;
+    }
+    
+    @Override
+    public String toString() {
+        return "Id = " + this.id + "\n" +
+               "Name = " + this.name;
+    }
+    
+    public static String displayParameters(List<Parameter> parametersList) {
+        String result = "";
+        for (Iterator<Parameter> it = parametersList.iterator(); it.hasNext();) {
+            Parameter parameter = it.next();
+            result += "Parameter = " + parameter.toString();
+        }
+        return result;
     }
 }

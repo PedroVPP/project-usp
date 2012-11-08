@@ -1,14 +1,9 @@
 package br.usp.project_usp.parser;
 
-import br.usp.project_usp.diagram.Diagram;
-import br.usp.project_usp.diagram.class_diagram.ClassDiagram;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 import java.io.File;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.io.SAXReader;
 
 /**
  *
@@ -23,12 +18,9 @@ public class Parser {
      */
     public Document parse(File file) {
         try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-            Document document = dBuilder.parse(file);
-            document.getDocumentElement().normalize();
-
+            
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(file);
             return document;
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,20 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.usp.project_usp.diagram.class_diagram;
 
 import br.usp.project_usp.diagram.Diagram;
 import br.usp.project_usp.diagram.DiagramType;
-import br.usp.project_usp.parser.XmiClassDiagram;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 /**
  *
@@ -25,76 +18,55 @@ public class ClassDiagram extends Diagram {
     private List<UmlClass> classes;
     private List<Association> associations;
 
-    public ClassDiagram(File file, Document document) {
+    public ClassDiagram(File file, Document document) throws Exception {
         super(file, document, DiagramType.ClassDiagram);
         classes = new ArrayList<UmlClass>();
         associations = new ArrayList<Association>();
-        XmiClassDiagram xmiClassDiagram = new XmiClassDiagram(document);
 
-        constructClasses(xmiClassDiagram.getClasses());
-        constructAssociations(xmiClassDiagram.getAssociations());
+        constructClasses(super.getDocument());
+        constructAssociations(super.getDocument());
     }
 
-    private void constructClasses(List<Node> classes) {
-        for (Iterator<Node> it = classes.iterator(); it.hasNext();) {
-            Node node = it.next();
+    private void constructClasses(Document document) {
+        String xPathClassesLocator = "//UML:Class[@xmi.id and @name]"; // every UML:Class node that has the xmi.id and name attribute
+        
+        for (Iterator<Element> it = document.selectNodes(xPathClassesLocator).iterator(); it.hasNext(); ) {
+            Element umlclassElement = it.next();
+            
             UmlClass newClass = new UmlClass();
-
-            Node id = node.getAttributes().getNamedItem("xmi.id");
-            Node name = node.getAttributes().getNamedItem("name");
-
-            if (id != null && name != null && !name.equals("")) {
-
-                newClass.setId(id.getNodeValue());
-                newClass.setName(name.getNodeValue());
-
-                NodeList attributesNodes = ((Element) node).getElementsByTagName("UML:Attribute");
-//                System.out.println("A classe " + node.getAttributes().getNamedItem("name") + "possui " + attributesNodes.getLength() + " atributos");
-                if (attributesNodes.getLength() > 0) {
-
-                    for (int i = 0; i < attributesNodes.getLength(); i++) {
-                        
-                        Node attributeNode = attributesNodes.item(i);
-                        
-                        Attribute newAttribute = new Attribute();
-
-                        newAttribute.setId(attributeNode.getAttributes().getNamedItem("xmi.id").getNodeValue());
-                        newAttribute.setName(attributeNode.getAttributes().getNamedItem("name").getNodeValue());
-                        newAttribute.setType(null); // TODO: falta implementar o mapeamento dos tipos dos atributos, não deveria ser nullo aqui.
-
-                        newClass.addAttribute(newAttribute);
-                    }
-
-                }
-
-                this.classes.add(newClass);
+            newClass.setId(umlclassElement.attributeValue("xmi.id"));
+            newClass.setName(umlclassElement.attributeValue("name"));
+            
+            String xPathAttributeLocator = umlclassElement.getUniquePath()+"/descendant::UML:Attribute";
+            for (Iterator<Element> it2 = document.selectNodes(xPathAttributeLocator).iterator(); it2.hasNext(); ) {
+                Element attributeElement=  it2.next();
+                
+                Attribute newAttribute = new Attribute();
+                newAttribute.setId(attributeElement.attributeValue("xmi.id"));
+                newAttribute.setName(attributeElement.attributeValue("name"));
+                newAttribute.setType(null); // TODO: falta implementar o mapeamento dos tipos dos atributos, não deveria ser nullo aqui.
+                
+                newClass.addAttribute(newAttribute);
             }
+            this.classes.add(newClass);
         }
     }
+    
 
-    private void constructAssociations(List<Node> associations) {
+    private void constructAssociations(Document document) throws Exception {
         
         // TODO: Falta implementar o mapeamento do nome e cardinalidade das associações
+        String xPathAssociationsLocator = "//UML:Association"; // every UML:Association node
         
-        for (Iterator<Node> it = associations.iterator(); it.hasNext();) {
-            Node node = it.next();
-
-            String id = node.getAttributes().getNamedItem("xmi.id").getNodeValue();
-            String name = node.getAttributes().getNamedItem("name").getNodeValue();
-            UmlClass participant1 = null, participant2 = null;
-
-            NodeList participantClasses = ((Element) node).getElementsByTagName("UML:Class");
-
-            participant1 = findClassById(participantClasses.item(0).getAttributes().getNamedItem("xmi.idref").getNodeValue());
-            participant2 = findClassById(participantClasses.item(1).getAttributes().getNamedItem("xmi.idref").getNodeValue());
-
-            UmlClass[] participants = {participant1, participant2};
-
+        for (Iterator<Element> it = document.selectNodes(xPathAssociationsLocator).iterator(); it.hasNext(); ) {
+            Element associationElement = it.next();
+            
             Association newAssociation = new Association();
-            newAssociation.setId(id);
-            newAssociation.setName(name);
-            newAssociation.setPasticipants(participants);
-
+            newAssociation.setId(associationElement.attributeValue("xmi.id"));
+            newAssociation.setName(associationElement.attributeValue("name"));
+            
+            newAssociation.addParticipant(findClassById(((Element) associationElement.selectNodes(associationElement.getUniquePath()+"/descendant::UML:Class").get(0)).attributeValue("xmi.idref")));
+            newAssociation.addParticipant(findClassById(((Element) associationElement.selectNodes(associationElement.getUniquePath()+"/descendant::UML:Class").get(1)).attributeValue("xmi.idref")));
             this.associations.add(newAssociation);
         }
     }
@@ -172,7 +144,7 @@ public class ClassDiagram extends Diagram {
         this.associations = associations;
     }
 
-    private void constructParticipantsAndMultiplicity(NodeList associationsEnd) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+//    private void constructParticipantsAndMultiplicity(NodeList associationsEnd) {
+//        throw new UnsupportedOperationException("Not yet implemented");
+//    }
 }

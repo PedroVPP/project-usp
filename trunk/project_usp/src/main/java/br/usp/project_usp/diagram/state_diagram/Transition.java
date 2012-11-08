@@ -10,11 +10,18 @@ package br.usp.project_usp.diagram.state_diagram;
  */
 public class Transition {
     private String id;
-    private String sourceStateId;
-    private String targetStateId;
+    private State sourceState;
+    private State targetState;
     private CallEvent callEvent;
     private Guard guard;
 
+    public Transition() {
+        this.sourceState = null;
+        this.targetState = null;
+        this.callEvent = null;
+        this.guard = null;
+    }
+    
     /**
      * @return the id
      */
@@ -32,29 +39,29 @@ public class Transition {
     /**
      * @return the source
      */
-    public String getSource() {
-        return sourceStateId;
+    public State getSource() {
+        return sourceState;
     }
 
     /**
      * @param source the source to set
      */
-    public void setSource(String source) {
-        this.sourceStateId = source;
+    public void setSource(State source) {
+        this.sourceState = source;
     }
 
     /**
      * @return the target
      */
-    public String getTarget() {
-        return targetStateId;
+    public State getTarget() {
+        return targetState;
     }
 
     /**
      * @param target the target to set
      */
-    public void setTarget(String target) {
-        this.targetStateId = target;
+    public void setTarget(State target) {
+        this.targetState = target;
     }
 
     /**
@@ -89,9 +96,15 @@ public class Transition {
     public String toString() {
         String result = "";
         
-        result += "id = " + this.id + "\n";
-        result += "sourceStateId = " + this.sourceStateId + "\n";
-        result += "targetStateId = " + this.targetStateId;
+        result += "id = " + this.id + "\n" + 
+                  "sourceStateId = " + this.sourceState + "\n" + 
+                  "targetStateId = " + this.targetState + "\n";
+        if(this.callEvent != null) {
+            result += "callEvent = " + this.callEvent.toString() + "\n";
+        }
+        if(this.guard != null) {
+            result += "guard = " + this.guard.toString();
+        }
         
         return result;
     }
