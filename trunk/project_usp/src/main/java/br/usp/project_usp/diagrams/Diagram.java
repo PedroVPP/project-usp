@@ -1,15 +1,22 @@
-package br.usp.project_usp.diagram;
+package br.usp.project_usp.diagrams;
 
 import java.io.File;
 import org.dom4j.Document;
 /**
  *
  * @author pedro
+ * this class was created to hold important information that I thought it would be important
+ * to store. The relevance of these informations is subject to questioning.
+ * In future versions maybe it could be deleted.
  */
 public class Diagram {
+    // the id of the diagram obtained from the xmi file
     private String id;
+    // the name of the diagram obtained from the xmi file
     private String name;
+    // the type of diagram (state or class diagram)
     private DiagramType type;
+    // the xmi file parser by SAXREADER
     private Document document;
     private File file;
     

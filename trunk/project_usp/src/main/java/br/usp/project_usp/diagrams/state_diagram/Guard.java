@@ -2,21 +2,21 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.usp.project_usp.diagram.state_diagram;
+package br.usp.project_usp.diagrams.state_diagram;
 
 /**
  *
  * @author pedro
  */
-public class Stereotype {
+public class Guard {
     private String id;
     private String name;
     
-    public Stereotype() {
+    public Guard() {
         
     }
     
-    public Stereotype(String id, String name) {
+    public Guard(String id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -49,5 +49,13 @@ public class Stereotype {
         this.name = name;
     }
     
-    
+    @Override
+    public String toString() {
+        return "Id = " + this.id + "\n" +
+               "Name = " + this.name;
+    }
+
+    public boolean isSatisfied() {
+        return true;
+    }
 }

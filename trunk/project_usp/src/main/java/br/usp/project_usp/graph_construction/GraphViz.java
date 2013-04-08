@@ -1,4 +1,4 @@
-package br.usp.project_usp.states_tree;
+package br.usp.project_usp.graph_construction;
 
 // GraphViz.java - a simple API to call dot from Java programs
 

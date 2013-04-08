@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.usp.project_usp.diagram.state_diagram;
+package br.usp.project_usp.diagrams.state_diagram;
 
 import java.util.Iterator;
 import java.util.List;
@@ -14,14 +14,18 @@ import java.util.List;
 public class Parameter {
     private String id;
     private String name;
+    private String value;
     
     public Parameter() {
-        
+        this.id = null;
+        this.name = null;
+        this.value = null;
     }
     
     public Parameter(String id, String name) {
         this.id = id;
         this.name = name;
+        this.value = null;
     }
 
     /**
@@ -54,7 +58,7 @@ public class Parameter {
     
     @Override
     public String toString() {
-        return "Id = " + this.id + "\n" +
+        return "" + // "Id = " + this.id + "\n" +
                "Name = " + this.name;
     }
     
@@ -65,5 +69,19 @@ public class Parameter {
             result += "Parameter = " + parameter.toString();
         }
         return result;
+    }
+
+    /**
+     * @return the value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
     }
 }
