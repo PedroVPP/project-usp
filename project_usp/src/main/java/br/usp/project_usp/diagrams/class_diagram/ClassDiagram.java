@@ -1,7 +1,7 @@
-package br.usp.project_usp.diagram.class_diagram;
+package br.usp.project_usp.diagrams.class_diagram;
 
-import br.usp.project_usp.diagram.Diagram;
-import br.usp.project_usp.diagram.DiagramType;
+import br.usp.project_usp.diagrams.Diagram;
+import br.usp.project_usp.diagrams.DiagramType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +12,15 @@ import org.dom4j.Element;
 /**
  *
  * @author pedro
+ * This class represents the class diagram. At first I thought that it was necessary 
+ * to the algorithm, but now I'm not sure it these informations about the class diagrams are
+ * really necessary. Maybe in the end, all the classes in the class_diagram package can be
+ * deleted.
+ * 
+ * TODO: Implement the concept of inheritance
+ * TODO: Implement the name and cardinality of associations
+ * TODO: Implement the type of the atributes in classes
+ * TODO: Implement the class stereotypes
  */
 public class ClassDiagram extends Diagram {
 

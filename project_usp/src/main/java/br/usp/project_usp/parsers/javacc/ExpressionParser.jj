@@ -1,0 +1,92 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */options{  JDK_VERSION = "1.5";  IGNORE_CASE = true;  DEBUG_LOOKAHEAD = true;  static = false;}PARSER_BEGIN(ExpressionParser)package br.usp.project_usp.parsers.javacc;import br.*;import java.util.*;import javax.swing.*;import java.io.StringReader;import java.io.Reader;public class ExpressionParser{  public ExpressionParser(String expression)  {    this ((Reader) (new StringReader(expression)));  }  public static void main(String args []) throws ParseException, Error, Exception  {    String expression = args [0];    ExpressionParser parser = new ExpressionParser(expression);//    try//    {      parser.expression();//    }//    catch (Exception e)//    {//      System.out.println("Exception found.");//      System.out.println(e.getMessage());//    }//    catch (Error e)//    {//      System.out.println("Error.");//      System.out.println(e.getMessage());//    }  }}PARSER_END(ExpressionParser)SKIP : /* skip the white spaces */{  " "| "\r"| "\t"| "\n"}TOKEN : /* operators */{  < AND : "&&" >| < OR : "||" >| < NOT : "~" >| < EQUALS : "==" >| < GT : ">" >| < LT : "<" >| < GE : ">=" >| < LE : "<=" >}TOKEN : /* reserved words */{  < OK : "ok" >| < NOT_FOUND : "not_found" >| < POST : "post" >| < PUT : "put" >| < DELETE : "delete" >}
+TOKEN : /* special symbols */
+{
+  < COMMA : "," >
+| < DOT : "." >
+| < LPAREN : "(" >
+| < RPAREN : ")" >
+| < LBRACKET : "[" >
+| < RBRACKET : "]" >
+| < LBRACE : "{" >
+| < RBRACE : "}" >
+| < SLASH : "/" >
+}
+TOKEN : /* common tokens */{  < #LETTER : [ "A"-"Z", "a"-"z", "_", "-" ] >| < #DIGIT : [ "0"-"9" ] >| < CONSTANT : (< DIGIT >)+ >
+| < TRUE : "true" >
+| < FALSE : "false" >| < IDENTIFIER : (< LETTER >)+ >
+| < VARIABLE : < LBRACE > < IDENTIFIER > < RBRACE >> }SPECIAL_TOKEN :{  < INVALID_LEXICAL : (~[ "a"-"z", "A"-"Z", "0"-"9", "/", "-", ")", "(", "[", "]", "{", "}", "<", ">", "=", "~", " ", ".", ",", "&", "|", "\t", "\n", "\r", "\f" ])+ >  {    System.out.println("Line " + input_stream.getEndLine() + " - Invalid string found: " + image);  }}
+void expression() :
+{}
+{
+  event() | invariant()
+}
+
+void event() :
+{}
+{
+  [ guard() ] httpMethod() httpMethodData() 
+}
+
+void guard() :
+{}{
+  < LBRACKET > booleanExpression() < RBRACKET >}
+
+// this needs to be tested, not sure if works properly
+void booleanExpression() :
+{}
+{
+  path() < DOT > < IDENTIFIER > arithmeticOperator() value() [booleanOperator() booleanExpression()] |
+  [ < NOT > ] < LPAREN > path() < DOT > < IDENTIFIER > arithmeticOperator() value() [booleanOperator() booleanExpression()] < RPAREN > [booleanOperator() booleanExpression()]
+}
+
+void arithmeticOperator() :
+{}
+{
+  < EQUALS > | < GT > | < LT > | < GE > | < LE >}
+
+void value() :
+{}{
+  < CONSTANT > | < TRUE > | < FALSE > | < IDENTIFIER >}
+
+void booleanOperator():
+{}{
+  < AND > | < OR >
+}
+
+void httpMethod() :
+{}
+{
+  < POST >  | < PUT >  | < DELETE >
+}
+
+void httpMethodData() :
+{}{
+  < LPAREN > path() args()  < RPAREN > }
+void path() :
+{}
+{
+  (< SLASH > ( < IDENTIFIER > | < VARIABLE >))+}
+
+void args() :
+{}{
+  (< COMMA > < IDENTIFIER >)*
+}
+
+// tenho que colocar a guard no meio das invariâncias
+void invariant() :
+{}{
+  getMethod() getMethodData() [booleanOperator() invariant()] |
+  [ < NOT > ] < LPAREN > getMethod() getMethodData() [booleanOperator() invariant()] < RPAREN > [booleanOperator() invariant()]}
+
+void getMethod() :
+{}
+{
+  < OK >  | < NOT_FOUND >
+}
+
+void getMethodData() :
+{}{
+  < LPAREN > path() < RPAREN >
+}

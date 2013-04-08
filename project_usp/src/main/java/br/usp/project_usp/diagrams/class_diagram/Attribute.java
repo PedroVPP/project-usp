@@ -2,25 +2,28 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.usp.project_usp.diagram.state_diagram;
+package br.usp.project_usp.diagrams.class_diagram;
 
 /**
  *
  * @author pedro
  */
-public class Guard {
+public class Attribute {
+    
     private String id;
     private String name;
-    
-    public Guard() {
+    private String type;
+
+    public Attribute() {
         
     }
     
-    public Guard(String id, String name) {
+    public Attribute(String id, String name, String type) {
         this.id = id;
         this.name = name;
+        this.type = type;
     }
-
+    
     /**
      * @return the id
      */
@@ -47,6 +50,20 @@ public class Guard {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
     }
     
     @Override

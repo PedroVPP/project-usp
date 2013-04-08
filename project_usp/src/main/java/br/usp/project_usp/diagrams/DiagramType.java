@@ -1,4 +1,4 @@
-package br.usp.project_usp.diagram;
+package br.usp.project_usp.diagrams;
 
 /**
  *

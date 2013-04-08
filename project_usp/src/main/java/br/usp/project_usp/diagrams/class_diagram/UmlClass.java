@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.usp.project_usp.diagram.class_diagram;
+package br.usp.project_usp.diagrams.class_diagram;
 
 import java.util.ArrayList;
 import java.util.List;

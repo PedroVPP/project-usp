@@ -1,4 +1,4 @@
-package br.usp.project_usp.diagram.state_diagram;
+package br.usp.project_usp.diagrams.state_diagram;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,21 +16,41 @@ public class State {
     private String id;
     private String name;
     private String uniqueName;
-    private Stereotype invariant;
+    private Invariant invariant;
     private List<State> children;
     private StateType stateType;
+    // the xml element that holds information about that state
     private Element stateElement;
     private boolean visited;
     private boolean initialState;
     private static int counter = 0;
 
     public State() {
+        this.id = null;
+        this.name = null;
+        this.uniqueName = null;
         this.children = new ArrayList<State>();
         this.invariant = null;
         this.stateType = null;
         this.stateElement = null;
         this.visited = false;
         this.initialState = false;
+        
+    }
+    
+    /**
+     * this constructor copies every attribute of the param state s into the new state.
+     * @param s the state to copy the attributes from.
+     */
+    public State(State s) {
+        this.id = Math.random()*10000+"";
+        this.setName(s.getName());
+        this.invariant = s.getInvariant();
+        this.children = s.getChildren();
+        this.setStateType(s.getStateType());
+        this.stateElement = s.getStateElement();
+        this.visited = s.isVisited();
+        this.initialState = s.isInitialState();
     }
 
     /**
@@ -65,15 +85,15 @@ public class State {
     /**
      * @return the invariant
      */
-    public Stereotype getInvariant() {
+    public Invariant getInvariant() {
         return invariant;
     }
 
     /**
-     * @param invariant the invariant to set
+     * @param stereotype the invariant to set
      */
-    public void setInvariant(Stereotype invariant) {
-        this.invariant = invariant;
+    public void setInvariant(Invariant stereotype) {
+        this.invariant = stereotype;
     }
 
     /**
@@ -138,6 +158,10 @@ public class State {
         if (this.stateType != StateType.UML_CompositeState) {
             this.children = null;
         }
+        if (this.uniqueName == null) {
+            this.uniqueName = generateUniqueName();
+        }
+        
     }
 
     /**
@@ -186,7 +210,7 @@ public class State {
         String result = "";
         
         if (children == null) {
-            return result;
+            return "Children = null";
         }
         
         for (Iterator<State> it = children.iterator(); it.hasNext();) {
@@ -215,6 +239,7 @@ public class State {
      * @return the uniqueName
      */
     public String getUniqueName() {
+        
         return uniqueName;
     }
     
@@ -222,28 +247,31 @@ public class State {
     public String toString() {
         String result = "";
         result = "Id = " + this.id + "\n" +
-                 "Name = " + this.name; 
+                 "Name = " + this.name + "\n"; 
         
-        if(this.invariant != null) {
-            result += "Invariant = " + this.invariant;
+        if(hasInvariant()) {
+            result += this.invariant.toString() + "\n";
+        } else {
+            result += "\n";
         }
         
         result += printChildren();
-        result += "\nInicial State = " + this.initialState;
+        result += "Inicial State = " + this.initialState;
         return result;
     }
 
-    private String generateUniqueName() {
-        String result = "";
-        if (this.name == null || this.name.equals("")) {
-            result += ""+counter;
+    public String generateUniqueName() {
+        String result = null;
+        
+        if (this.getStateType() != null) {
+            result = "" + counter;
             counter++;
-        } else {
-            result = this.name;
         }
         
         return result;
     }
+    
+    
     
     public boolean isCompositeState() {
         boolean result = false;
@@ -275,5 +303,32 @@ public class State {
             result = true;
         }
         return result;
+    }
+    
+    public boolean hasInvariant() {
+        if (this.invariant == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public String getInvariantName() {
+        if(this.getInvariant() == null) {
+            return "";
+        } else {
+            return this.getInvariant().getName();
+        }
+    }
+    
+    /**
+     * @return This method returns true if the state is a simple state or a composite state, otherwise returns false.
+     */
+    public boolean isCommonState() {
+        if (isCompositeState() || isSimpleState()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

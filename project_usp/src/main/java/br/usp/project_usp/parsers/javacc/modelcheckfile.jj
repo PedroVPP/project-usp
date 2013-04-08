@@ -1,0 +1,650 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ * Trabalho da Disciplina de Especificação Formal de Software.
+ * Implementação - Model checker!
+ */options{  	JDK_VERSION = "1.5";
+	DEBUG_LOOKAHEAD = true;
+  	IGNORE_CASE = true;   	static = false;}PARSER_BEGIN(ssc5906JMC)package br.parser;
+
+
+
+import br.mef.*;
+import java.util.*;
+import javax.swing.*;
+
+public class ssc5906JMC{
+
+static private final String Version = ("ssc5906JMC - icmcJMC - Java Model Checker \"Version 0.1\"  \n A Java implementation"); 
+//static private MEF mef;
+static private String ctlExpression = "";
+private ArrayList<Expression> expressions = new ArrayList<Expression>();
+  public static void main(String args []) throws ParseException  {
+	System.out.println(Version);
+	String filename = " "; // file name to analyse
+	ssc5906JMC parser;
+
+	//Declaracao da MEF a ser instaciada e povoado por estados e propriedades
+	
+
+	
+    
+	if (args.length < 1)
+	System.out.println("Sorry, you have to insert a parameter ...");
+	// caso em que nenhum arquivo é passado como parâmetro
+
+	else
+	{
+	//abrir o arquivo para leitura
+ 	filename = args[args.length-1];  
+    System.out.println("Reading Specification from file " + filename + " . . .");
+	try {  // cria AS
+            parser = new ssc5906JMC(new java.io.FileInputStream(filename));
+			parser.unitJavaMC(); // chamada do método que faz a análise ...
+            System.out.println("--  Arquivo de parser valido --");
+			 
+			if (parser.token_source.foundLexError() > 0)
+        	{
+              System.out.println("Lexical Errors found");
+        	}
+        	else
+        	{
+			/* aqui devemos chamar métodos para processar a MEF e verificar propriedades ...*/
+			System.out.println("#################Analise da MEF definida#################");
+			ArrayList<State> state  = MEF.getInstance().getStates();
+
+					/*Analise quanto a estados */
+			System.out.println("O MEF definida contem: "+state.size()+" estados");
+			System.out.println("O estado inicial eh "+MEF.getInstance().getFirstState().getName());
+			System.out.println("\n ####    os estados declarados  e transicoes sao  ######\n");
+
+
+			ArrayList<State>  stateChildrem = null;
+			for (State s : state) {
+
+			  System.out.print("estado -"+s.getName()+"- e transicoes para [");
+			  stateChildrem = s.getChildren();
+
+			  for (State s2 : stateChildrem) {
+			  System.out.print(" "+s2.getName()+" ");  
+			  }
+			System.out.print("]\n\n");			  
+			}
+
+
+			/*Analise quanto a propriedades */
+			ArrayList<Property> properties = MEF.getInstance().getProperties();
+			System.out.println("O MEF definida contem: "+properties.size()+" propriedades");
+
+			System.out.println(" ---  "+ state.size());
+			System.out.println("\n ####    as propriedades declaradas sao  ######\n");
+
+			for (Property p : properties) {
+			  System.out.println(" "+p.getName()+" ");			  		
+				}
+
+			System.out.println("\n ####    os estados e suas propriedades sao  ######\n");
+
+			ArrayList<Property> validProperties =  null; 
+			for (State s : state) {
+			validProperties = s.getValidProperties();			  
+			System.out.print("-para o estado "+s.getName()+" as propriedades validas  sao [" );
+			
+			for (Property pState : validProperties) {
+				System.out.print(" "+pState.getName()+" ");
+			   }
+			System.out.print(" ] \n\n");
+
+			}
+			
+			//dps das analises, criacao da MEF
+			//MEF.getInstance().createMEF();
+			
+			//System.out.println("#################Analise das Expressões CTL#################");
+			//Expression e = (Expression) MEF.getInstance().getExpressions().get(MEF.getInstance().getExpressions().size() -1);
+			//considerar apenas o último elemento de expressions da MEF,
+			//os anteriores foram utilizados apenas para auxilar a construção
+			// e não serão mais utilizados (poderia inclusive ser apagados depois...  			
+			//printExpressions(e);
+			}
+        } 
+    catch (java.io.FileNotFoundException e)
+    	{
+        System.out.println("File " + filename + " not found.");
+        return;
+        }	}
+	  } // end main()
+
+/*
+static public void printExpressions(Expression e)
+{
+  	  if (!e.getType().equals("CS")) //Operações AX AF EX EG EF ...  	  {
+  	    System.out.println(e.getName());  	  }	  
+	  if (e.getExp1() != null)	  {		printExpressions(e.getExp1());
+	  }
+	    
+	  if (e.getExp2() != null)
+	  {
+		printExpressions(e.getExp2());
+	  }
+		  
+}
+*/
+
+static public String im(String s)
+{
+int k;
+   k = s.lastIndexOf("\"");
+   try {s = s.substring(1,k);}
+   catch (StringIndexOutOfBoundsException e)
+   {}
+   return s;
+}
+  }PARSER_END(ssc5906JMC)
+
+//####################################
+// DECLARACAO DE ATOMOS DO AN. LEXICO
+//####################################
+
+
+TOKEN_MGR_DECLS :
+{
+static int countLexError = 0;
+
+public int foundLexError()
+{
+   return countLexError;
+}
+
+}
+
+
+/*caracteres a serem desprezados pelo compilador*///#################################################################
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+//#################################################################
+//#################/*DEFINIÇÕES DE COMENTÁRIOS*/
+SKIP :
+{
+  "/*" : multilinecomment
+}
+SKIP :
+{
+  "//" : singlelinecomment
+}
+<multilinecomment> SKIP:
+{
+   "*/" : DEFAULT
+|  <~[]>
+}
+
+<singlelinecomment> SKIP:
+{
+   <["\n","\r"]> : DEFAULT
+|   <~[]>
+}
+
+
+//#################################################################
+//#################/*DEFINIÇÕES DE PALAVRAS RESERVADAS*/
+TOKEN :{   <E: "E">
+  | <A: "A">   
+  | <U: "U">
+  | <AX: "AX">
+  | <EX: "EX">
+  | <AF: "AF">
+  | <EF: "EF">
+  | <AG: "AG">
+  | <EG: "EG">
+|  <JMC: "JMC">| 	< STATES: "states">
+| 	< PROPERTIES: "properties">
+| 	< DEFINE: "def">
+|   < TRUE: "true">
+|   < FALSE: "false" >
+}
+
+//#################################################################
+//#################/*DEFINIÇÕES DE TODOS OS OPERADORES ESPECIAIS*/
+TOKEN:{
+   <COMMA:",">
+  | < LBRACKET: "[">
+  | < RBRACKET: "]">
+  | < SEMICOLON: ";"> 
+  | <COLON: ":">
+  | <EQ: "=">
+  | <Lparentheses : "(" >
+  | <Rparentheses : ")" >
+  | <RECEIVE: ":=" >
+
+//#################################################################
+//#################/*DEFINIÇÕES DOS OPERADORES ESPECIAIS CTL*/  
+  | <NOT: "~" >
+  | <AND: "^" >
+  | <OR: "v">
+  | <IMPLICATION: "->">  // if .. then
+  | <BICONDICIONAL: "<->"> //if and only if ...
+  
+  
+	}
+
+
+//#################################################################
+//#################/*DEFINIÇÃO DE IDENTIFICADORES EM PASCAL*/######
+TOKEN:{
+  <IDENTIFIER: <LETTER> (<LETTER> |<DIGIT>)*>
+  | <LETTER:["a"-"z", "A"-"Z", "_"]>
+  | <DIGIT:["0"-"9"]>
+}
+
+
+//#################################################################
+//#################/*Tratador de erros léxicos*/######
+SPECIAL_TOKEN :
+{
+<INVALID_LEXICAL: 
+(~ ["a"-"z", "A"-"Z",
+  "0"-"9",
+  "\"",
+  "\\",
+  "/",
+  "-",
+  ";",
+  ")",
+  "(",
+  "[",
+  "]",
+  ":",
+  " ",
+  "\t",
+  "\n",
+  "\r",
+  "\f"
+])+>
+   {
+    System.out.println("Line " + input_stream.getEndLine() + 
+                           " - Invalid string found: " + image);
+    countLexError++;
+   }
+|
+   <INVALID_CONST: 
+   "\"" (~ ["\n","\r","\""])* ["\n","\r"]>
+   {
+    System.out.println("Line " + input_stream.getEndLine() + 
+                           " - String constant has a \\n: " + image);
+    countLexError++;
+   }
+}
+
+
+
+//########################################
+// INICIO DA DECLARACAO DE DO AN. LEXICO
+//########################################
+
+
+void unitJavaMC():
+{}{
+  <JMC> // inicio
+	icmcJavaModelCheckerUnit()
+  <JMC> // fim default}
+
+
+void icmcJavaModelCheckerUnit():
+{
+  }{
+	(modelDec()
+
+	ctlGrammar() //primeira expressao CTL obrigatoria
+	{	   Expression expMEF = expressions.get(expressions.size() -1);
+	   expMEF.setName(ctlExpression);
+	   MEF.getInstance().getExpressions().add(expMEF);
+	   ctlExpression = "";  	}
+	(<COMMA> ctlGrammar()	{
+	   expMEF = expressions.get(expressions.size() -1);
+	   expMEF.setName(ctlExpression);
+	   MEF.getInstance().getExpressions().add(expMEF);
+	   ctlExpression = "";  	}
+	)*)  // pode ser que nao tenhamos definicoes de propriedades
+		}
+
+void modelDec():
+{  }
+{ 	satesDec() propertiesDec() behavioerDec() // definicao de ordem de declaracoes do nosso modelo: estados, propriedades e comportamento	 }
+
+
+Expression ctlGrammar():
+{
+
+  Token t = new Token();
+  Expression exp = null;
+  Expression exp1 = null;
+  Expression exp2 = null; }{
+  //<VERIFYING> // por eqto, a definicao de propriedades é apenas um texto verifying. Aqui será nosso trabalho
+  // toDo, definir essa gramática seguindo normas de CTL    (     
+	( t = <IDENTIFIER> | //identificador
+	
+	  t = <TRUE > | // definicao de tautologia
+  
+	  t = <FALSE> // definicao de contradicao
+
+	)
+	(
+	  {
+	    System.out.println("Verificação da Validade da Propriedade  "+t.toString());
+		if (MEF.getInstance().getProperty(t.toString()).equals(null))
+		{
+		javax.swing.JOptionPane.showMessageDialog(null, "A propriedade "+t.toString()+" nao foi declarada", "MEF - Expression Error ", JOptionPane.INFORMATION_MESSAGE);
+
+		//  System.out.println();
+		  		}
+	    
+	    exp = new Expression(t.toString());	    
+	    exp.setType(null);	    
+	    ctlExpression = ctlExpression + t.toString();
+	    exp.setAllName(t.toString());
+	  }	  	)   				
+   | 
+   // definicao de propriedade atomica
+      <Lparentheses>
+      exp = logicalRelations()
+    
+  <Rparentheses> 
+    |      //definicao de relacoes logicas parentisadas em CTL
+  exp = ctlSpecifications() exp1 = ctlGrammar()  (  {
+    exp.setAllName(exp.getName() + exp1.getAllName());  }
+    
+    ) |
+  //exp1 = unionDec() exp2 = union()
+  exp = unionAux()
+  
+)
+  {
+    if (exp1 != null)    {		exp.setExp1(exp1);
+		
+    }
+    this.expressions.add(exp);
+    return exp;
+  }  
+}
+
+
+
+Expression logicalRelations():
+{
+  Expression exp;}{	(	  exp = negation() |
+	  exp = dualRelations()
+    )
+	{
+	  return exp;	}
+	  	 }
+
+
+
+Expression negation():
+{
+   Token t = new Token();
+   Expression exp;
+   Expression exp1;
+}
+{
+  (    t = <NOT>
+	)  
+
+    {
+      ctlExpression = ctlExpression + " ( ~ ";           exp1 = ctlGrammar();
+      exp = new Expression(t.toString() + " "+exp1.getName());
+      exp.setExp1(exp1);
+      exp.setType(ExpressionType.NOT);
+      ctlExpression = ctlExpression + " ) ";
+      exp.setAllName(" ( ~ " + exp1.getAllName() + " )");
+      return exp;
+          }    
+}
+
+
+Expression dualRelations():
+{
+  Token t = new Token();
+  Expression exp;
+  Expression exp1;
+  Expression exp2;
+  ExpressionType ep = null;
+}{
+{  
+  ctlExpression = ctlExpression + " ( ";}
+  	exp1 = ctlGrammar()
+  	(
+  	   	   t = <AND>     	   	 | //conjunction
+	 t = <OR>	 
+  	 |  //disjunction
+  	 t = <IMPLICATION>
+	 | //material implication - if  .. then
+  	 t =  <BICONDICIONAL> //Bicondicional - if and only if
+  	)
+  	{
+  	  ctlExpression = ctlExpression + " " + t.toString()+ " ";  	}  	exp2 = ctlGrammar()
+
+  	{
+		ctlExpression = ctlExpression + " ) ";
+  	  exp = new Expression("( "+exp1.getName() +" " + t.toString()+ " " + exp2.getName() + " )");
+  	     exp.setExp1(exp1);
+  	     exp.setExp2(exp2);
+  	  if (t.toString().equals("^"))
+  	   ep = ExpressionType.AND;
+  	  else if (t.toString().toUpperCase().equals("V"))   	  	ep = ExpressionType.OR;  	  else if (t.toString().equals("->")) 
+  	  	ep = ExpressionType.IMP;
+  	  else if (t.toString().equals("<->")) 
+  	  	ep = ExpressionType.BIC;
+  	       
+  	     exp.setType(ep);
+  	     exp.setAllName("( "+exp1.getName() +" " + t.toString()+ " " + exp2.getName() + " )");
+        return exp; 		  					  					
+	  }
+}
+
+Expression ctlSpecifications():
+{
+    Token t = new Token();
+    ExpressionType ep = null; }{ ( t = <AX> //em todos os próximos estados as propriedade e valida
+  | t = <EX> //existe um próximo estado no qual a propriedade vale     
+  | t = <AF> //todas as execucoes fazem o caminho valer em algum lugar
+  | t = <EF> //em algum lugar, é possível que aconteça   
+  | t = <AG> //propriedade sempre valida
+  | t = <EG> //para um caminho, a partir de um estado, a prop. vale
+  )
+  {
+    ctlExpression = ctlExpression + t.toString()+ " ";
+    Expression exp = new Expression(t.toString()+ " ");
+    exp.setAllName(ctlExpression);
+    if (t.toString().toUpperCase().equals("AX"))
+    	ep = ExpressionType.AX;
+    else if (t.toString().toUpperCase().equals("EX"))
+    	ep = ExpressionType.EX;
+    else if (t.toString().toUpperCase().equals("AF"))
+    	ep = ExpressionType.AF;
+    else if (t.toString().toUpperCase().equals("EF"))
+    	ep = ExpressionType.EF;
+    else if (t.toString().toUpperCase().equals("AG"))
+    	ep = ExpressionType.AG;
+    else if (t.toString().toUpperCase().equals("EG"))
+    	ep = ExpressionType.EG;    	    	    	    
+    exp.setType(ep);
+	return exp;  					  					
+  }	        }
+
+Expression unionAux() :
+{
+  String tipo = "";
+  Expression exp;
+  ExpressionType ep = null;}
+{
+ tipo = unionDec()
+ exp = union()
+ {
+   if (tipo.toUpperCase().equals("A"))
+     ep = ExpressionType.AU;
+   else if   (tipo.toUpperCase().equals("E"))
+     ep = ExpressionType.EU;
+   exp.setType(ep);	
+   //MEF.getInstance().getExpressions().add(exp);
+   return exp; }}
+
+String unionDec():
+{
+    Token t = new Token(); }{
+  (
+    t = < E > | t = < A >
+   )
+  {
+    ctlExpression = ctlExpression + t.toString()+ " ";
+	return t.toString();  					  					
+  }
+	  }
+
+Expression union():
+{
+  Token t = new Token();
+  Expression exp;
+  Expression exp1;
+  Expression exp2;}{
+    (     t = <LBRACKET>
+     {
+       ctlExpression = ctlExpression  + " [ ";     }
+     exp1 = ctlGrammar() 
+     t = <U>
+     {
+       ctlExpression = ctlExpression +  " U ";     }
+     exp2 = ctlGrammar()
+    t = <RBRACKET>
+    {
+      ctlExpression = ctlExpression + " ] ";    }
+  )
+    {
+
+
+  	    exp = new Expression(" [ " + exp1.getName() + " U " + exp2.getName() + " ] ");
+  	    exp.setExp1(exp1);
+  	    exp.setExp2(exp2);
+  	    exp.setAllName(ctlExpression);         
+		return exp;  					  					
+    }
+}
+
+
+/*
+Expression logicalDefinitions():
+{
+  Token t = new Token();
+  Expression exp; 
+}
+{	 (   t = <TRUE>     |     
+	     t = <FALSE>	)
+	 {
+	   exp = new Expression(t.toString());
+	   return exp;
+	 }      
+}
+*/
+
+
+
+
+
+
+void satesDec(): 
+{
+  Token t = new Token() ;
+  State state = null;  }{
+   <STATES> 
+    <Lparentheses>
+   				( t = <IDENTIFIER>
+			{			  		state = new State(t.toString()); 
+  					MEF.getInstance().addState(state); // adiciona estado na estrutura MEF
+  					System.out.println("Estado "+t.toString()+" lido com sucesso e incluido na instacia da MEF");  					  								}
+   				)+   				
+   <Rparentheses>   
+}
+
+void propertiesDec(): // simples declaracao de propriedades
+{
+	Token t = new Token() ;
+ 	Property property = null;
+  }{
+  <PROPERTIES>
+  	<Lparentheses>
+  			(
+  			 (t =  <IDENTIFIER>)
+  			 { 			   
+				property = new Property(t.toString()); //
+				MEF.getInstance().addProperty(property); // adiciona estado na estrutura MEF
+  				System.out.println("Propriedade "+t.toString()+" lido com sucesso e incluido na instacia da MEF"); 
+			}
+  	       )+
+  	<Rparentheses>}
+
+void behavioerDec():
+{
+  Token t = new Token();
+}
+{
+ <DEFINE>
+   <LBRACKET>
+	defineBody() //exatamente uma especificacao de modelo
+   <RBRACKET>}
+void defineBody(): // especificação de um estado - próximos e propriedades
+{
+  Token t = new Token();
+  State specified, analyzed;
+  Property property = null;}{
+ (t = <IDENTIFIER>  //estado sendo definido
+ {
+	analyzed = MEF.getInstance().getState(t.toString());
+	MEF.getInstance().setFirstState(analyzed);  	 } )
+  <Lparentheses>
+      (t = <IDENTIFIER> // estados para os quais o estado sendo definido tera transicao
+	{
+	 specified = MEF.getInstance().getState(t.toString());
+	 analyzed.addChild(specified); 	})+
+    <COLON>
+    ( t = <IDENTIFIER> // propriedades válidas no estado sendo definido
+	{
+	 // código de insercao da propriedade nos estados 
+	 property = MEF.getInstance().getProperty(t.toString());
+	 analyzed.addValidProperties(property);	 
+	})+
+
+    <Rparentheses>
+	(	  (t = <IDENTIFIER> 
+	    {
+	    analyzed = MEF.getInstance().getState(t.toString());
+		}
+	)
+
+
+ <Lparentheses>
+
+ (t = <IDENTIFIER>
+{
+	 specified = MEF.getInstance().getState(t.toString());
+	 analyzed.addChild(specified); }
+)+
+
+  <COLON>
+  (t = <IDENTIFIER>
+	{
+	 // código de insercao da propriedade nos estados 
+	 property = MEF.getInstance().getProperty(t.toString());
+	 analyzed.addValidProperties(property);	 
+	})+
+
+  <Rparentheses>)*
+
+}
+
+
